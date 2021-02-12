@@ -1,0 +1,34 @@
+{
+  "min_packer_version": "1.6.4",
+  "variables": {
+    "aws_region": "${aws_region}"
+  },
+  "builders": [{
+    "ami_name": "ubuntu-20.04-{{isotime \"20060102030405\"}}",
+    "ami_description": "An Ubuntu 20.04 AMI that has Jenkins thingies installed.",
+    "instance_type": "t3.nano",
+    "name": "ubuntu20-ami",
+    "region": "{{user `aws_region`}}",
+    "type": "amazon-ebs",
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "architecture": "x86_64",
+        "name": "*ubuntu-focal-20.04-*",
+        "block-device-mapping.volume-type": "gp2",
+        "root-device-type": "ebs"
+      },
+      "owners": [ "099720109477" ],
+      "most_recent": true
+    },
+    "ssh_username": "ubuntu"
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+      "sleep 30",
+      "sudo apt update",
+      "sudo apt upgrade -y "
+    ]
+  }]
+}
