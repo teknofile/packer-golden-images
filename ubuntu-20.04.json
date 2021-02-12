@@ -23,12 +23,20 @@
     },
     "ssh_username": "ubuntu"
   }],
-  "provisioners": [{
+  "provisioners": [
+    {
     "type": "shell",
     "inline": [
       "sleep 30",
       "sudo apt update",
       "sudo apt upgrade -y "
     ]
-  }]
+  },{
+    "type": "shell",
+    "inline": [
+      "wget https://inspector-agent.amazonaws.com/linux/latest/install",
+      "sudo bash install"
+    ]
+  }
+  ]
 }
