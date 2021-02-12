@@ -25,7 +25,7 @@ pipeline {
     stage("Validate Template") {
       steps {
         echo "Testing to make sure that the json is right"
-        sh "/usr/local/bin/packer validate jenkins-agent-ubuntu-x86_64.json"
+        sh "/usr/local/bin/packer validate ubuntu-20.04.json"
       }
     }
 
