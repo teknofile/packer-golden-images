@@ -31,7 +31,7 @@ pipeline {
 
     // The Jenkins node is only allowed to create the wrapped secret ID
     // and with a wrap-ttl between 100s and 300s
-    stage("Create Wrapped Secret ID") {
+    stage("Get AWS Creds") {
       steps {
         script {
           withCredentials([
@@ -93,13 +93,8 @@ pipeline {
     stage("Build the AMI") {
       steps {
         echo "Building the AMI"
-        // TODO: "With Credentials"
-        withCredentials([usernamePassword(credentialsId: 'aws-tkf-sharedservices', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-        // sh "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} ./packer build jenkins-agent-ubuntu-x86_64.json"
-          sh "/usr/local/bin/packer build jenkins-agent-ubuntu-x86_64.json"
-        }
+          sh "/usr/local/bin/packer build ubuntu.json"
       }
     }
-
   }
 }
