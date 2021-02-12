@@ -1,7 +1,7 @@
 {
   "min_packer_version": "1.6.4",
   "variables": {
-    "aws_region": "${aws_region}"
+    "aws_region": "us-west-2"
   },
   "builders": [{
     "ami_name": "ubuntu-20.04-{{isotime \"20060102030405\"}}",

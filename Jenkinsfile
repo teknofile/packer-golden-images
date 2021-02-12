@@ -10,7 +10,15 @@ pipeline {
     ROLE_ID="54c29b82-d415-dd33-288c-cb07ea43e16d"
     VAULT_ADDR="https://vault.copperdale.teknofile.net"
 
+    // PACKER_FILE:
+    //   The file in the git repo we want to run packer against.
     PACKER_FILE = "ubuntu-20.04.json"
+
+    // AWS_ARN:
+    //  This is the role, in AWS (in arn format), that we want to 'assume'. This
+    //  essentially will be where/what account the AMI is built in.
+    AWS_ARN = "arn:aws:iam::432915778703:role/tkfPipelineRole"
+
   }
   stages {
     stage("Setup Enviornment") {
@@ -62,7 +70,7 @@ pipeline {
             )
 
             sh '''
-              VAULT_TOKEN=${VAULT_TOKEN1} vault read aws/sts/tkfPipeline role_arn=arn:aws:iam::133530902744:role/tkfPipelineRole -format=json > /tmp/aws_creds.json
+              VAULT_TOKEN=${VAULT_TOKEN1} vault read aws/sts/tkfPipeline role_arn=${AWS_ARN} -format=json > /tmp/aws_creds.json
             '''
             env.AWS_ACCESS_KEY_ID = sh (
               returnStdout: true,
@@ -76,6 +84,11 @@ pipeline {
               returnStdout: true,
               script: "cat /tmp/aws_creds.json | jq -r .data.security_token"
             ).trim()
+
+            sh '''
+              # We need to clean up the aws_creds off of the filesystem, they are temporary, but c'mon man...
+              rm /tmp/aws_creds.json
+            '''
           }
         }
       }
