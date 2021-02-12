@@ -9,6 +9,8 @@ pipeline {
   environment {
     ROLE_ID="54c29b82-d415-dd33-288c-cb07ea43e16d"
     VAULT_ADDR="https://vault.copperdale.teknofile.net"
+
+    PACKER_FILE = "ubuntu-20.04.json"
   }
   stages {
     stage("Setup Enviornment") {
@@ -25,7 +27,7 @@ pipeline {
     stage("Validate Template") {
       steps {
         echo "Testing to make sure that the json is right"
-        sh "/usr/local/bin/packer validate ubuntu-20.04.json"
+        sh "/usr/local/bin/packer validate ${PACKER_FILE}"
       }
     }
 
@@ -41,10 +43,6 @@ pipeline {
               vaultAddr: 'https://vault.copperdale.teknofile.net'
             ]
           ]){
-
-            sh '''
-              export
-            '''
 
             env.WRAPPED_SID = sh(
               returnStdout: true,
@@ -78,12 +76,6 @@ pipeline {
               returnStdout: true,
               script: "cat /tmp/aws_creds.json | jq -r .data.security_token"
             ).trim()
-
-            sh '''
-              echo "Testing out the aws creds..."
-              export | grep AWS
-              aws ec2 describe-instances --region us-west-2
-            '''
           }
         }
       }
@@ -93,7 +85,7 @@ pipeline {
     stage("Build the AMI") {
       steps {
         echo "Building the AMI"
-          sh "/usr/local/bin/packer build ubuntu.json"
+          sh "/usr/local/bin/packer build ${PACKER_FILE}"
       }
     }
   }
